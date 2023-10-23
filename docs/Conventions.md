@@ -58,6 +58,8 @@ public class Book
 
 ## Data type
 
+<https://www.sqlite.org/datatype3.html>
+
 - `string` -> `nvarchar(max)` by default
 - `<type>` -> Database provider specific
 
