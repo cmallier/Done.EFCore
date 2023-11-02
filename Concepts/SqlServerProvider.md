@@ -1,4 +1,4 @@
-# Microsoft SQL Server EF Core Database Provider
+# Microsoft SQL Server - EF Core - Database Provider
 
 Microsoft SQL Server (2012 onwards)
 
