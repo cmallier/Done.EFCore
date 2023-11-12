@@ -1,4 +1,4 @@
-﻿namespace EfCoreSamplesApp.Entities.TableSpliting;
+﻿namespace TableSplitting.Entities;
 
 public class DetailedOrder
 {

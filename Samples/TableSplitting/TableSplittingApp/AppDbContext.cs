@@ -1,38 +1,26 @@
-﻿using EfCoreSamplesApp.Entities.TableSpliting;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using TableSplitting.Entities;
 
-public class TableSplittingContext : DbContext
+namespace StaticApp;
+
+public class AppDbContext : DbContext
 {
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<DetailedOrder> DetailedOrders { get; set; }
+    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+        => optionsBuilder
+          .UseSqlServer( @"Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=TableSplittingApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          .LogTo( Console.WriteLine, new[] { RelationalEventId.CommandExecuted } )
+          .EnableSensitiveDataLogging();
 
-    public TableSplittingContext()
-    {
 
-    }
+    // DbSets
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<DetailedOrder> DetailedOrders => Set<DetailedOrder>();
 
-    public TableSplittingContext( DbContextOptions<TableSplittingContext> options ) : base( options )
-    {
 
-    }
-
-    protected override void OnConfiguring( DbContextOptionsBuilder options )
-    {
-        string connectionString = $"Server=DESKTOP-HOME; Database=EfCoreSamplesApp; Trusted_Connection=True; MultipleActiveResultSets=true; TrustServerCertificate=True;";
-        options.UseSqlServer( connectionString );
-
-        options.EnableDetailedErrors( true );
-        options.EnableSensitiveDataLogging( true );
-
-        options.LogTo( Console.WriteLine, new[] { RelationalEventId.CommandExecuted } );
-
-        base.OnConfiguring( options );
-    }
 
     protected override void OnModelCreating( ModelBuilder modelBuilder )
     {
-
         modelBuilder.Entity<DetailedOrder>(
             x =>
             {
@@ -69,6 +57,5 @@ public class TableSplittingContext : DbContext
                     .Property( o => o.Version )
                     .IsRowVersion()
                     .HasColumnName( "Version" );
-
     }
 }

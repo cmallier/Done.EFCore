@@ -20,6 +20,7 @@ dotnet add package Microsoft.EntityFrameworkCore.InMemory  --version 8.0.0
 
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL   --version 7.0.11
 dotnet add package MySql.EntityFrameworkCore               --version 7.0.5
+dotnet add package Pomelo.EntityFrameworkCore.MySql        --version 7.0.5
 dotnet add package MongoDB.EntityFrameworkCore             --version 7.0.0-preview.1
 dotnet add package Oracle.EntityFrameworkCore              --version 7.21.12
 ```

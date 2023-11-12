@@ -1,5 +1,4 @@
 ﻿using EfCoreSamplesApp;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -17,10 +16,6 @@ class Program
 
         //builder.Services.AddDbContextPool<AppDbContext>( options =>
         //builder.Services.AddDbContext<Blog_OneToMany_BasicDbContext>( options =>
-        builder.Services.AddDbContext<TableSplittingContext>( options =>
-        {
-            options.UseSqlServer( connectionString );
-        } );
 
         using IHost host = builder.Build();
         Application application = host.Services.GetRequiredService<Application>();
