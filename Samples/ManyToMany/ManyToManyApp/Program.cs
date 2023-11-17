@@ -54,9 +54,11 @@ using( var context = new AppDbContext() )
     Console.WriteLine( $"{result1.Titre} Notes: {result1.Notes.Count()}" );
 
 
+
     List<Note> notes = context.Notes.Where( x => x.PublicationOeuvres.Any( p => p.PublicationOeuvreId == 1 ) )
                                     .TagWith( "----- Result 2 -----" )
                                     .ToList();
+
 
     foreach( Note note in notes )
     {
