@@ -2,10 +2,10 @@
 using InheritanceApp.Entities;
 using Microsoft.EntityFrameworkCore;
 
-using( var context = new AppDbContext() )
+using ( var context = new AppDbContext() )
 {
-    //context.Database.EnsureDeleted();
-    //context.Database.EnsureCreated();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
 
     /*
      select* from PublicationOeuvre
@@ -13,9 +13,9 @@ using( var context = new AppDbContext() )
      select* from Note
     */
 
-    //await context.Database.ExecuteSqlRawAsync( "delete from PublicationOeuvreNote" );
-    //await context.Database.ExecuteSqlRawAsync( "delete from Note" );
-    //await context.Database.ExecuteSqlRawAsync( "delete from PublicationOeuvre" );
+    await context.Database.ExecuteSqlRawAsync( "delete from PublicationOeuvreNote" );
+    await context.Database.ExecuteSqlRawAsync( "delete from Note" );
+    await context.Database.ExecuteSqlRawAsync( "delete from PublicationOeuvre" );
 
 
     PublicationOeuvre publicationOeuvre1 = new()
@@ -44,7 +44,7 @@ using( var context = new AppDbContext() )
 Console.WriteLine( "------------------------------------------------------" );
 Console.WriteLine( "-- Results" );
 
-using( var context = new AppDbContext() )
+using ( var context = new AppDbContext() )
 {
     PublicationOeuvre result1 = context.PublicationOeuvres.Where( x => x.Titre == "Titre1" )
                                                           .Include( x => x.Notes )
@@ -58,7 +58,7 @@ using( var context = new AppDbContext() )
                                     .TagWith( "----- Result 2 -----" )
                                     .ToList();
 
-    foreach( Note note in notes )
+    foreach ( Note note in notes )
     {
         Console.WriteLine( $"{note.Contenu}" );
     }

@@ -35,6 +35,9 @@ CREATE TABLE [dbo].[Note]
 GO
 CREATE UNIQUE INDEX [IX_Note_NoteId] ON [dbo].[Note] ([NoteId])
 
+ALTER TABLE [dbo].[Note]  WITH CHECK ADD  CONSTRAINT [FK_Note_UtilisateurCreation] FOREIGN KEY([UtilisateurCreationId])
+REFERENCES [dbo].[Utilisateur] ([UtilisateurId])
+
 CREATE TABLE [dbo].[PublicationOeuvreNote]
 (
     [PublicationOeuvreId] INT NOT NULL,
@@ -45,7 +48,13 @@ CREATE TABLE [dbo].[PublicationOeuvreNote]
 )
 GO
 
-
+CREATE TABLE [dbo].[Utilisateur](
+    [UtilisateurId] [int] NOT NULL,
+    [Nom] [nvarchar](60) NOT NULL,
+    [Prenom] [nvarchar](60) NOT NULL,
+    CONSTRAINT [PK_Utilisateur] PRIMARY KEY CLUSTERED
+)
+GO
 ```
 
 
