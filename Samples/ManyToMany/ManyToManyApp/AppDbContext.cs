@@ -7,9 +7,9 @@ namespace InheritanceApp;
 public class AppDbContext : DbContext
 {
     // Configure from Entities to use SqlServer with local Sql mdf file
-    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
-          .UseSqlServer( @"Data Source=Desktop-Home; Initial Catalog=ManyToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          .UseSqlServer( @"Data Source=Laptop-Work; Initial Catalog=ManyToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           //.UseSqlServer( @"Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=ManyToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           .LogTo( Console.WriteLine, new[] { RelationalEventId.CommandExecuted } )
           .EnableSensitiveDataLogging();
@@ -19,7 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<Note> Notes => Set<Note>();
 
 
-    protected override void OnModelCreating( ModelBuilder modelBuilder )
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PublicationOeuvre>().ToTable( "PublicationOeuvre" );
 

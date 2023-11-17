@@ -9,9 +9,11 @@ public partial class Note
 
     public string Contenu { get; set; } = null!;
 
-    public DateTime DateCreation { get; set; }
+    public DateTimeOffset DateCreation { get; set; }
 
     public int UtilisateurCreationId { get; set; }
+
+    public virtual Utilisateur UtilisateurCreation { get; set; } = null!;
 
     public virtual ICollection<PublicationOeuvre> PublicationOeuvres { get; set; } = new List<PublicationOeuvre>();
 }
