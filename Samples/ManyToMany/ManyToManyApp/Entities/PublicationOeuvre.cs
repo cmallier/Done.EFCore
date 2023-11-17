@@ -11,6 +11,7 @@ public class Note
     public int UtilisateurCreationId { get; set; }
 
     public ICollection<PublicationOeuvre> PublicationOeuvres { get; set; } = [];
+    //public PublicationOeuvre PublicationOeuvre { get; set; } = default!;
 }
 
 
