@@ -20,8 +20,8 @@ Console.WriteLine( "-- Results" );
 using( var context = new AppDbContext() )
 {
     Livre livre = context.Livres
-                                 .TagWith( "----- Result 1 -----" )
-                                 .First();
+                         .TagWith( "----- Result 1 -----" )
+                         .First();
 
     Console.WriteLine( $"Result 1: {livre.Genre}" );
 }
