@@ -1,5 +1,5 @@
-﻿using MappingApp;
-using MappingApp.Entities;
+﻿using MappingWithCollection;
+using MappingWithCollection.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -16,6 +16,11 @@ static void DisplayStates(IEnumerable<EntityEntry> entries)
     }
 }
 
+/*
+select * from Livres
+select * from Tags
+*/
+
 using ( var context = new AppDbContext() )
 {
     context.Database.EnsureDeleted();
@@ -27,7 +32,11 @@ using ( var context = new AppDbContext() )
     livre.IsActive = true;
     livre.Number = 1;
 
-    context.AddRange( livre );
+    livre.Tags.Add( new() { Nom = "Tag1" } );
+    livre.Tags.Add( new() { Nom = "Tag2" } );
+    livre.Tags.Add( new() { Nom = "Tag3" } );
+
+    context.Add( livre );
     context.SaveChanges();
 }
 
@@ -35,32 +44,44 @@ using ( var context = new AppDbContext() )
 Console.WriteLine( "------------------------------------------------------" );
 Console.WriteLine( "-- Results" );
 
-using ( var context = new AppDbContext() )
-{
-    Livre livre = context.Livres
-                         .TagWith( "----- Result 1 -----" )
-                         .First();
+//using ( var context = new AppDbContext() )
+//{
+//    Livre livre = context.Livres
+//                         .Include( x => x.Tags )
+//                         .TagWith( "----- Result 1 -----" )
+//                         .First();
 
-    Console.WriteLine( $"Result 1: {livre.Titre}" );
-    Console.WriteLine( $"Result 1: {livre.IsActive}" );
-    Console.WriteLine( $"Result 1: {livre.Number}" );
+//    Console.WriteLine( $"Result 1: {livre.Titre}" );
+//    Console.WriteLine( $"Result 1: {livre.IsActive}" );
+//    Console.WriteLine( $"Result 1: {livre.Number}" );
 
-    livre.Titre = "Titre2";         // Detected as modified
-    livre.Number = 1;               // Not detected as modified
+//    foreach ( Tag tag in livre.Tags )
+//    {
+//        Console.WriteLine( $"Result 1: {tag.Nom}" );
+//    }
 
-    // Tracker: On (Connected scenario)
-    // EF detects this change and marks marks Title as modified.
-    // UPDATE Livres SET Titre = @p0
-    // WHERE LivreId = @p1;
+//    livre.Titre = "Titre2";             // Detected as modified
+//    livre.Number = 1;                   // Not detected as modified
 
-    DisplayStates( context.ChangeTracker.Entries() );
+//    livre.Tags[0].Nom = "Tag1Modified"; // Detected as modified
+//    livre.Tags[1].Nom = "Tag2";         // Detected as modified
 
-    context.SaveChanges();
-}
+//    // Tracker: On (Connected scenario)
+//    // EF detects this change and marks marks Title as modified.
+//    // UPDATE Livres SET Titre = @p0
+//    // WHERE LivreId = @p1;
+//    // UPDATE Tags SET Nom = @p2
+//    // WHERE TagId = @p3;
+
+//    DisplayStates( context.ChangeTracker.Entries() );
+
+//    context.SaveChanges();
+//}
 
 //using ( var context = new AppDbContext() )
 //{
 //    Livre livre = context.Livres
+//                         .Include( x => x.Tags )
 //                         .TagWith( "----- Result 2 -----" )
 //                         .First();
 
@@ -68,38 +89,47 @@ using ( var context = new AppDbContext() )
 //    Console.WriteLine( $"Result 2: {livre.IsActive}" );
 //    Console.WriteLine( $"Result 2: {livre.Number}" );
 
-//    livre.Titre = "Titre2";
+//    livre.Titre = "Titre1_Modified";
+//    livre.Tags[0].Nom = "Tag1_Modified";
 
 //    // Update = Disconnected scenario
 //    // Should be used when an entity object is not attached to a context
 //    // All Properties will be marked as modified
 //    context.Update( livre );
 
+//    DisplayStates( context.ChangeTracker.Entries() );
+
 //    // UPDATE Livres SET IsActive = @p0, Number = @p1, Titre = @p2
 //    // WHERE LivreId = @p3;
+//    // UPDATE[Tags] SET[Nom] = @p4
+//    // WHERE[TagId] = @p5;
+
 //    context.SaveChanges();
 //}
 
-//using ( var context = new AppDbContext() )
-//{
-//    Livre livre = context.Livres
-//                         .TagWith( "----- Result 3 -----" )
-//                         .First();
 
-//    Console.WriteLine( $"Result 2: {livre.Titre}" );
-//    Console.WriteLine( $"Result 2: {livre.IsActive}" );
-//    Console.WriteLine( $"Result 2: {livre.Number}" );
 
-//    Livre updatedLivre = new() { LivreId = 1, Titre = "Titre3", IsActive = true, Number = 2 };
+using ( var context = new AppDbContext() )
+{
+    Livre livre = context.Livres
+                         .Include( x => x.Tags )
+                         .TagWith( "----- Result 3 -----" )
+                         .First();
 
-//    // Track modified values fron DbContext (livre) and apply them to updatedLivre
-//    // Ex: Only Titre and Number is modified
-//    context.Entry( livre ).CurrentValues.SetValues( updatedLivre );
+    Console.WriteLine( $"Result 2: {livre.Titre}" );
+    Console.WriteLine( $"Result 2: {livre.IsActive}" );
+    Console.WriteLine( $"Result 2: {livre.Number}" );
 
-//    // UPDATE Livres SET Number = @p0, Titre = @p1
-//    // WHERE LivreId = @p2;
-//    context.SaveChanges();
-//}
+    Livre updatedLivre = new() { LivreId = 1, Titre = "Titre3", IsActive = true, Number = 2 };
+
+    // Track modified values fron DbContext (livre) and apply them to updatedLivre
+    // Ex: Only Titre and Number is modified
+    context.Entry( livre ).CurrentValues.SetValues( updatedLivre );
+
+    // UPDATE Livres SET Number = @p0, Titre = @p1
+    // WHERE LivreId = @p2;
+    context.SaveChanges();
+}
 
 
 // Note

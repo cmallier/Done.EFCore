@@ -1,4 +1,4 @@
-﻿namespace MappingApp.Entities;
+﻿namespace MappingWithCollection.Entities;
 
 // public class Livre
 // {
@@ -31,6 +31,16 @@ public class Livre
     public bool IsActive { get; set; } = false;
 
     public int Number { get; set; }
+
+    public IList<Tag> Tags { get; set; } = [];
+}
+
+
+public class Tag
+{
+    public int TagId { get; set; }
+
+    public string Nom { get; set; } = default!;
 }
 
 
