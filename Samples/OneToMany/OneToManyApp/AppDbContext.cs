@@ -6,10 +6,11 @@ namespace OneToManyApp;
 
 public class AppDbContext : DbContext
 {
-    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
           //.UseSqlServer( @"Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=StaticApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
-          .UseSqlServer( @"Server=Desktop-Home; Initial Catalog=OneToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          //.UseSqlServer( @"Server=Desktop-Home; Initial Catalog=OneToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          .UseSqlServer( @"Server=Laptop-Work; Initial Catalog=OneToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           .LogTo( Console.WriteLine, new[] { RelationalEventId.CommandExecuted } )
           .EnableSensitiveDataLogging();
 
@@ -20,7 +21,7 @@ public class AppDbContext : DbContext
 
 
 
-    protected override void OnModelCreating( ModelBuilder modelBuilder )
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Livre>().ToTable( "Livres" );
         modelBuilder.Entity<Livre>().HasKey( t => t.XLivreId );
@@ -28,7 +29,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Tag>().ToTable( "Tags" );
         modelBuilder.Entity<Tag>().HasKey( t => t.XTagId );
-
 
         // Default ForeighKey name: <NavigationPropertyName><PrincipalKeyPropertyName>  Exp: Livre_XLivreId
 
@@ -41,6 +41,5 @@ public class AppDbContext : DbContext
         //modelBuilder.Entity<Tag>().HasOne( t => t.Livre )
         //                          .WithMany( l => l.Tags )
         //                          .HasForeignKey( "ForceForeignKeyName" );
-
     }
 }
