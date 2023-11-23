@@ -7,24 +7,35 @@ namespace EnumsApp;
 public class AppDbContext : DbContext
 {
     // Configure from Entities to use SqlServer with local Sql mdf file
-    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
-          .UseSqlServer( @"Data Source=Desktop-Home; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          .UseSqlServer( @"Data Source=Laptop-Work; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           //.UseSqlServer( @"Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=ManyToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           .LogTo( Console.WriteLine, new[] { RelationalEventId.CommandExecuted } )
           .EnableSensitiveDataLogging();
 
     // DbSets
+    // Strategy 1
+    //public DbSet<Livre> Livres => Set<Livre>();
+
+
+    // Strategy 2
+    //public DbSet<Livre> Livres => Set<Livre>();
+    //public DbSet<Categorie> Categories => Set<Categorie>();
+
+    // Stategy 3
     public DbSet<Livre> Livres => Set<Livre>();
-    public DbSet<Categorie> Categories => Set<Categorie>();
 
 
-    protected override void OnModelCreating( ModelBuilder modelBuilder )
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Strategy 1
         // NoTable
         // Categories : [0,1]
+        //modelBuilder.Entity<Livre>().ToTable( "Livres" );
 
-        // Convesion
+
+        // Conversion
         // Categories : Aventure,Biographie
         //modelBuilder.Entity<Livre>()
         //            .Property( x => x.Categories )
@@ -34,41 +45,24 @@ public class AppDbContext : DbContext
 
 
         // Strategy 2
-        modelBuilder.Entity<Livre>().ToTable( "Livres" );
-        modelBuilder.Entity<Categorie>().ToTable( "Categories" );
-        modelBuilder.Entity<Categorie>()
-                    .Property( x => x.CategorieId )
-                    .ValueGeneratedNever();
-
-
-        // Strategy 3
         //modelBuilder.Entity<Livre>().ToTable( "Livres" );
-
-
         //modelBuilder.Entity<Categorie>().ToTable( "Categories" );
-
-
-        //modelBuilder.Entity<Categorie>()
-        //            .HasKey( e => e.CategorieId );
-
         //modelBuilder.Entity<Categorie>()
         //            .Property( x => x.CategorieId )
         //            .ValueGeneratedNever();
 
-        //modelBuilder.Entity<Categorie>()
-        //            .Property( b => b.Code )
-        //            .HasField( "_code" )
-        //            .IsRequired( false )
-        //            .HasColumnType( "nvarchar(100)" );
 
-        //modelBuilder.Entity<Livre>()
-        //    .HasMany( e => e.Categories )
-        //    .WithMany( e => e.Livres )
-        //    .UsingEntity( joinEntityName: "LivreXCategoryX",
-        //        r => r.HasOne( typeof( Categorie ) ).WithMany().HasForeignKey( "CategorieId" ).HasPrincipalKey( nameof( Categorie.CategorieId ) ),
-        //        l => l.HasOne( typeof( Livre ) ).WithMany().HasForeignKey( "LivreId" ).HasPrincipalKey( nameof( Livre.LivreId ) ),
-        //        j => j.HasKey( "LivreId", "CategorieId" )
-        //    );
+        // Strategy 3
+        modelBuilder.Entity<Livre>().ToTable( "Livres" );
+
+        modelBuilder.Entity<Livre>()
+            .HasMany( e => e.Categories )
+            .WithMany( x => x.Livres )
+            .UsingEntity( joinEntityName: "LivreCategorie",
+                r => r.HasOne( typeof( Categorie ) ).WithMany().HasForeignKey( "CategorieId" ).HasPrincipalKey( "CategorieId" ),
+                l => l.HasOne( typeof( Livre ) ).WithMany().HasForeignKey( "LivreId" ).HasPrincipalKey( "LivreId" ),
+                j => j.HasKey( "LivreId", "CategorieId" )
+            );
     }
 }
 
