@@ -27,7 +27,7 @@ using ( var context = new AppDbContext() )
     livre.IsActive = true;
     livre.Number = 1;
 
-    context.AddRange( livre );
+    context.Add( livre );
     context.SaveChanges();
 }
 
@@ -48,10 +48,11 @@ using ( var context = new AppDbContext() )
     livre.Titre = "Titre2";         // Detected as modified
     livre.Number = 1;               // Not detected as modified
 
-    // Tracker: On (Connected scenario)
-    // EF detects this change and marks marks Title as modified.
-    // UPDATE Livres SET Titre = @p0
-    // WHERE LivreId = @p1;
+    //Tracker:
+    //    On( Connected scenario )
+    //     EF detects this change and marks marks Title as modified.
+    //     UPDATE Livres SET Titre = @p0
+    //     WHERE LivreId = @p1;
 
     DisplayStates( context.ChangeTracker.Entries() );
 
@@ -80,25 +81,25 @@ using ( var context = new AppDbContext() )
 //    context.SaveChanges();
 //}
 
-//using ( var context = new AppDbContext() )
+//using ( var context = new appdbcontext() )
 //{
-//    Livre livre = context.Livres
-//                         .TagWith( "----- Result 3 -----" )
-//                         .First();
+//    livre livre = context.livres
+//                         .tagwith( "----- result 3 -----" )
+//                         .first();
 
-//    Console.WriteLine( $"Result 2: {livre.Titre}" );
-//    Console.WriteLine( $"Result 2: {livre.IsActive}" );
-//    Console.WriteLine( $"Result 2: {livre.Number}" );
+//    console.writeline( $"result 2: {livre.titre}" );
+//    console.writeline( $"result 2: {livre.isactive}" );
+//    console.writeline( $"result 2: {livre.number}" );
 
-//    Livre updatedLivre = new() { LivreId = 1, Titre = "Titre3", IsActive = true, Number = 2 };
+//    livre updatedlivre = new() { livreid = 1, titre = "titre3", isactive = true, number = 2 };
 
-//    // Track modified values fron DbContext (livre) and apply them to updatedLivre
-//    // Ex: Only Titre and Number is modified
-//    context.Entry( livre ).CurrentValues.SetValues( updatedLivre );
+//    // track modified values fron dbcontext (livre) and apply them to updatedlivre
+//    // ex: only titre and number is modified
+//    context.entry( livre ).currentvalues.setvalues( updatedlivre );
 
-//    // UPDATE Livres SET Number = @p0, Titre = @p1
-//    // WHERE LivreId = @p2;
-//    context.SaveChanges();
+//    // update livres set number = @p0, titre = @p1
+//    // where livreid = @p2;
+//    context.savechanges();
 //}
 
 
