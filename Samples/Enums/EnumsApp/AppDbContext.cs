@@ -7,10 +7,10 @@ namespace EnumsApp;
 public class AppDbContext : DbContext
 {
     // Configure from Entities to use SqlServer with local Sql mdf file
-    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
-          //.UseSqlServer( @"Data Source=Laptop-Work; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
-          .UseSqlServer( @"Data Source=Desktop-Home; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          .UseSqlServer( @"Data Source=Laptop-Work; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          //.UseSqlServer( @"Data Source=Desktop-Home; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           //.UseSqlServer( @"Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=ManyToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           .LogTo( Console.WriteLine, new[] { RelationalEventId.CommandExecuted } )
           .EnableSensitiveDataLogging();
@@ -25,15 +25,20 @@ public class AppDbContext : DbContext
     //public DbSet<Categorie> Categories => Set<Categorie>();
 
     // Stategy 3
+    //public DbSet<Livre> Livres => Set<Livre>();
+
+
+    // Strategy 7
     public DbSet<Livre> Livres => Set<Livre>();
+    public DbSet<Categorie> Categories => Set<Categorie>();
 
 
-    protected override void OnModelCreating( ModelBuilder modelBuilder )
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Strategy 1
         // NoTable
         // Categories : [0,1]
-        //modelBuilder.Entity<Livre>().ToTable( "Livres" );
+        modelBuilder.Entity<Livre>().ToTable( "Livres" );
 
 
         // Conversion
@@ -120,9 +125,27 @@ public class AppDbContext : DbContext
         // Strategy 6
         //modelBuilder.Entity<Livre>().ToTable( "Livres" );
 
-        modelBuilder.Entity<Livre>()
-                    .OwnsMany( x => x.Categories, builder => { builder.ToJson(); } );
+        //modelBuilder.Entity<Livre>()
+        //            .OwnsMany( x => x.Categories, builder => { builder.ToJson(); } );
 
+
+        // Strategy 7
+        modelBuilder.Entity<Livre>().ToTable( "Livres" );
+        modelBuilder.Entity<Livre>()
+                    .Property( x => x.Categories )
+
+        modelBuilder.Entity<Livre>()
+                    .HasMany( a => a.Categories )
+                    .WithMany() // No collection in EntityB, so leave this blank
+                    .UsingEntity( joinEntityName: "LivresCategories",
+                        r => r.HasOne( typeof( Categorie ) ).WithMany().HasForeignKey( "CategoriesId" ).HasPrincipalKey( "CategorieId" ),
+                        l => l.HasOne( typeof( Livre ) ).WithMany().HasForeignKey( "LivresId" ).HasPrincipalKey( "LivreId" ),
+                        j => j.HasKey( "LivresId", "CategoriesId" )
+                    );
+
+        modelBuilder.Entity<Categorie>().ToTable( "Categories" );
+        modelBuilder.Entity<Categorie>()
+                    .HasKey( x => x.CategorieId );
 
         //modelBuilder.Entity<Livre>()
         //    .HasMany( e => e.Categories )
@@ -142,7 +165,7 @@ public class AppDbContext : DbContext
 
 
 
-// Generate a EnumCollectionJsonValueConverter<T> for EFCOre
+// Generate a EnumCollectionJsonValueConverter<T> for EFCore
 
 //public class EnumCollectionJsonValueConverter<T> : ValueConverter<ICollection<T>, string> where T : Enum
 //{
@@ -155,3 +178,7 @@ public class AppDbContext : DbContext
 //    {
 //    }
 //}
+
+
+
+// https://chat.openai.com/share/d10842c3-d4b7-464e-9c26-6d931e92f4e5

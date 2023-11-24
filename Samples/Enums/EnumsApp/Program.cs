@@ -1,4 +1,42 @@
 ﻿
+
+using EnumsApp;
+using EnumsApp.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+static void DisplayStates(IEnumerable<EntityEntry> entries)
+{
+    foreach ( EntityEntry entry in entries )
+    {
+        Console.WriteLine( $"Entity: {entry.Entity.GetType().Name}, State: {entry.State} " );
+
+        foreach ( string propertyName in entry.Properties.Select( p => p.Metadata.Name ) )
+        {
+            Console.WriteLine( $"Property: {propertyName}, OriginalValue: {entry.OriginalValues[propertyName]}, CurrentValue: {entry.CurrentValues[propertyName]}, IsModified: {entry.Members.First( x => x.Metadata.Name == propertyName ).IsModified}" );
+        }
+    }
+}
+
+static void ModifiyStates(IEnumerable<EntityEntry> entries)
+{
+    foreach ( EntityEntry entry in entries )
+    {
+        Console.WriteLine( $"Entity: {entry.Entity.GetType().Name}, State: {entry.State} " );
+
+        if ( entry.Entity.GetType() == typeof( Categorie ) )
+        {
+            entry.State = EntityState.Detached;
+            return;
+        }
+
+        foreach ( string propertyName in entry.Properties.Select( p => p.Metadata.Name ) )
+        {
+            Console.WriteLine( $"Property: {propertyName}, OriginalValue: {entry.OriginalValues[propertyName]}, CurrentValue: {entry.CurrentValues[propertyName]}, IsModified: {entry.Members.First( x => x.Metadata.Name == propertyName ).IsModified}" );
+        }
+    }
+}
+
 #region Strategy 1: Use a collection of enums
 
 //using EnumsApp;
@@ -55,9 +93,9 @@
 //    context.Database.EnsureDeleted();
 //    context.Database.EnsureCreated();
 
-//    context.Categories.Add( new() { CategorieId = (int) Category.Aventure, Code = "Aventure" } );
-//    context.Categories.Add( new() { CategorieId = (int) Category.Biographie, Code = "Biographie" } );
-//    context.Categories.Add( new() { CategorieId = (int) Category.Roman, Code = "Roman" } );
+//    //context.Categories.Add( new() { CategorieId = 1, Code = "Aventure" } );
+//    //context.Categories.Add( new() { CategorieId = 2, Code = "Biographie" } );
+//    //context.Categories.Add( new() { CategorieId = 3, Code = "Roman" } );
 
 //    context.SaveChanges();
 
@@ -70,7 +108,7 @@
 //    };
 
 //    // Fetch
-//    Categorie categorie1 = context.Categories.Find( (int) Category.Aventure );
+//    Categorie categorie1 = context.Categories.Find( 1 );
 //    livre1.Categories.Add( categorie1 );
 
 //    Livre livre2 = new()
@@ -108,7 +146,7 @@
 //using EnumsApp;
 //using EnumsApp.Entities;
 
-//using( var context = new AppDbContext() )
+//using ( var context = new AppDbContext() )
 //{
 //    //context.Database.EnsureDeleted();
 //    //context.Database.EnsureCreated();
@@ -137,7 +175,7 @@
 //Console.WriteLine( "------------------------------------------------------" );
 //Console.WriteLine( "-- Results" );
 
-//using( var context = new AppDbContext() )
+//using ( var context = new AppDbContext() )
 //{
 //    Livre result1 = context.Livres.Where( x => x.Titre == "Titre1" )
 //                                  .Include( x => x.Categories )
@@ -154,61 +192,61 @@
 //using EnumsApp.Entities;
 //using Microsoft.EntityFrameworkCore;
 
-//using( var context = new AppDbContext() )
+//using ( var context = new AppDbContext() )
 //{
 //    string createTableCategories =
 //        """
-//        Create Database EnumsApp;
-//        GO
+//Create Database EnumsApp;
+//GO
 
-//        Use EnumsApp;
-//        GO
+//Use EnumsApp;
+//GO
 
-//        CREATE TABLE [dbo].[Categories](
-//           	[CategorieId] [int] NOT NULL,
-//           	[Code] [nvarchar](200) NOT NULL,
-//         CONSTRAINT [PK_Categories] PRIMARY KEY CLUSTERED
-//        (
-//           	[CategorieId] ASC
-//        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-//        ) ON [PRIMARY]
+//CREATE TABLE [dbo].[Categories](
+//       [CategorieId][int] NOT NULL,
+//       [Code][nvarchar]( 200 ) NOT NULL,
+// CONSTRAINT[PK_Categories] PRIMARY KEY CLUSTERED
+//(
+//       [CategorieId] ASC
+//)WITH( PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF ) ON[PRIMARY]
+//) ON[PRIMARY]
 //        GO
 
 //        CREATE TABLE [dbo].[Livres](
-//           	[LivreId] [int] IDENTITY(1,1) NOT NULL,
-//           	[Titre] [nvarchar](150) NOT NULL,
-//         CONSTRAINT [PK_Livres] PRIMARY KEY CLUSTERED
+//               [LivreId][int] IDENTITY( 1, 1 ) NOT NULL,
+//               [Titre][nvarchar]( 150 ) NOT NULL,
+//         CONSTRAINT[PK_Livres] PRIMARY KEY CLUSTERED
 //        (
-//           	[LivreId] ASC
-//        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-//        ) ON [PRIMARY]
+//               [LivreId] ASC
+//        )WITH( PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF ) ON[PRIMARY]
+//        ) ON[PRIMARY]
 //        GO
 
 //        CREATE TABLE [dbo].[LivresCategories](
-//              	[LivresId] [int] NOT NULL,
-//              	[CategoriesId] [int] NOT NULL,
-//         CONSTRAINT [PK_LivreCategorie] PRIMARY KEY CLUSTERED
+//                  [LivresId][int] NOT NULL,
+//                  [CategoriesId][int] NOT NULL,
+//         CONSTRAINT[PK_LivreCategorie] PRIMARY KEY CLUSTERED
 //        (
-//              	[LivresId] ASC,
-//              	[CategoriesId] ASC
-//        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-//        ) ON [PRIMARY]
+//                  [LivresId] ASC,
+//                  [CategoriesId] ASC
+//        )WITH( PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF ) ON[PRIMARY]
+//        ) ON[PRIMARY]
 //        GO
 
 //        ALTER TABLE [dbo].[LivresCategories]  WITH CHECK ADD  CONSTRAINT [FK_LivreCategorie_Categories_CategorieId] FOREIGN KEY([CategoriesId])
-//        REFERENCES [dbo].[Categories] ([CategorieId])
+//        REFERENCES[dbo].[Categories]( [CategorieId] )
 //        ON DELETE CASCADE
 //        GO
 
-//        ALTER TABLE [dbo].[LivresCategories] CHECK CONSTRAINT [FK_LivreCategorie_Categories_CategorieId]
+//        ALTER TABLE [dbo].[LivresCategories] CHECK CONSTRAINT[FK_LivreCategorie_Categories_CategorieId]
 //        GO
 
 //        ALTER TABLE [dbo].[LivresCategories]  WITH CHECK ADD  CONSTRAINT [FK_LivresCategories_Livres_LivreId] FOREIGN KEY([LivresId])
-//        REFERENCES [dbo].[Livres] ([LivreId])
+//        REFERENCES[dbo].[Livres]( [LivreId] )
 //        ON DELETE CASCADE
 //        GO
 
-//        ALTER TABLE [dbo].[LivresCategories] CHECK CONSTRAINT [FK_LivresCategories_Livres_LivreId]
+//        ALTER TABLE [dbo].[LivresCategories] CHECK CONSTRAINT[FK_LivresCategories_Livres_LivreId]
 //        GO
 
 //        insert into Categories (CategorieId, Code) values (1, 'Aventure'), (2, 'Biographie'), (3, 'Roman')
@@ -246,7 +284,7 @@
 //Console.WriteLine( "------------------------------------------------------" );
 //Console.WriteLine( "-- Results" );
 
-//using( var context = new AppDbContext() )
+//using ( var context = new AppDbContext() )
 //{
 //    Livre result1 = context.Livres.Where( x => x.Titre == "Titre1" )
 //                                  .Include( x => x.LivreCategories )
@@ -259,12 +297,11 @@
 
 #region Strategy 5: Domain-Driven Design
 
-//using Enums;
 //using EnumsApp;
 //using EnumsApp.Entities;
 //using Microsoft.EntityFrameworkCore;
 
-//using( var context = new AppDbContext() )
+//using ( var context = new AppDbContext() )
 //{
 //    Livre livre1 = new()
 //    {
@@ -277,10 +314,10 @@
 //    context.Livres.Add( livre1 );
 //    context.SaveChanges();
 
-//    foreach( Categorie categorie in livre1.Categories )
+//    foreach ( Categorie categorie in livre1.Categories )
 //    {
 //        // Insert into table LivresCategories
-//        context.Database.ExecuteSqlInterpolated( $"INSERT INTO LivresCategories (LivresId, CategoriesId) VALUES ({livre1.LivreId}, {(int) categorie})" );
+//        context.Database.ExecuteSqlInterpolated( $"insert into LivresCategories (LivresId, CategoriesId) values ( {livre1.LivreId}, {(int) categorie}) " );
 //    }
 
 //    context.SaveChanges();
@@ -289,7 +326,7 @@
 //Console.WriteLine( "------------------------------------------------------" );
 //Console.WriteLine( "-- Results" );
 
-//using( var context = new AppDbContext() )
+//using ( var context = new AppDbContext() )
 //{
 //    Livre result1 = context.Livres.Where( x => x.Titre == "Titre1" )
 //                                  .First();
@@ -301,67 +338,105 @@
 //    //    result1.Categories.Add( (Categorie) id );
 //    //}
 
-//    //result1.Categories = [.. context.Database.SqlQuery<Categorie>( $"select CategoriesId from LivresCategories where LivresId = ({result1.LivreId})" )];
+//    result1.Categories = [.. context.Database.SqlQuery<Categorie>( $"select CategoriesId from LivresCategories where LivresId = ({result1.LivreId})" )];
 
-//    result1.Categories = SqlExtensions.GetEnums<Categorie>( $"select CategoriesId from LivresCategories where LivresId = ({result1.LivreId})", context ).ToList();
+//    //result1.Categories = SqlExtensions.GetEnums<Categorie>( $"select CategoriesId from LivresCategories where LivresId = ({result1.LivreId})", context ).ToList();
 
 
 //    Console.WriteLine( $"{result1.Titre} Categories: {result1.Categories.Count()}" );
-//    foreach( Categorie categorie in result1.Categories )
+//    foreach ( Categorie categorie in result1.Categories )
 //    {
 //        Console.WriteLine( $"  - {categorie}" );
 //    }
 //}
-
-
 #endregion region
 
 
 #region Strategy 6 : Json
 
-using EnumsApp;
-using EnumsApp.Entities;
-using Microsoft.EntityFrameworkCore;
+//using EnumsApp;
+//using EnumsApp.Entities;
+//using Microsoft.EntityFrameworkCore;
 
-using( var context = new AppDbContext() )
+//using ( var context = new AppDbContext() )
+//{
+//    context.Database.EnsureDeleted();
+//    context.Database.EnsureCreated();
+
+//    Livre livre1 = new()
+//    {
+//        Titre = "Titre1",
+//        Categories = new List<Categorie>() { "Biographie", "Roman" },
+//    };
+
+//    context.Livres.Add( livre1 );
+//    context.SaveChanges();
+//}
+
+//Console.WriteLine( "------------------------------------------------------" );
+//Console.WriteLine( "-- Results" );
+
+//using( var context = new AppDbContext() )
+//{
+//    Livre result1 = context.Livres.Where( x => x.Titre == "Titre1" )
+//                                  .Include( x => x.Categories )
+//                                  .First();
+
+//    Console.WriteLine( $"{result1.Titre} Categories: {result1.Categories.Count()}" );
+//    foreach( Categorie categorie in result1.Categories )
+//    {
+//        Console.WriteLine( $"  - {categorie.Value}" );
+//    }
+//}
+
+
+//// LivreId  Titre   Categories
+//// 1	    Titre1  [{"Value":"Biographie"},{ "Value":"Roman"}]
+
+#endregion region
+
+
+#region Strategy 7 : Intermediate ManyToMany
+
+
+using ( var context = new AppDbContext() )
 {
-    context.Database.EnsureDeleted();
-    context.Database.EnsureCreated();
+    Categorie categorie = context.Categories.Find( 1 );
 
     Livre livre1 = new()
     {
         Titre = "Titre1",
-        Categories = new List<Categorie>() { "Biographie", "Roman" },
+        Categories = new List<Categorie>() { categorie },
     };
 
+    // Add
     context.Livres.Add( livre1 );
+
+    //DisplayStates( context.ChangeTracker.Entries() );
+    //ModifiyStates( context.ChangeTracker.Entries() );
+    //DisplayStates( context.ChangeTracker.Entries() );
     context.SaveChanges();
+
+
+    Console.WriteLine( "------------------------------------------------------" );
+    Console.WriteLine( "-- Results" );
 }
 
-Console.WriteLine( "------------------------------------------------------" );
-Console.WriteLine( "-- Results" );
-
-using( var context = new AppDbContext() )
+using ( var context = new AppDbContext() )
 {
     Livre result1 = context.Livres.Where( x => x.Titre == "Titre1" )
                                   .Include( x => x.Categories )
                                   .First();
 
     Console.WriteLine( $"{result1.Titre} Categories: {result1.Categories.Count()}" );
-    foreach( Categorie categorie in result1.Categories )
+    foreach ( Categorie categorie in result1.Categories )
     {
-        Console.WriteLine( $"  - {categorie.Value}" );
+        Console.WriteLine( $"  - {categorie}" );
     }
 }
 
 
-// LivreId  Titre   Categories
-// 1	    Titre1  [{"Value":"Biographie"},{ "Value":"Roman"}]
-
-#endregion region
-
-
-
+#endregion
 
 // https://softdevpractice.com/blog/many-to-many-ef-core/
 // https://www.learnentityframeworkcore5.com/whats-new-in-ef-core-5/many-to-many-relationship

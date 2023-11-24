@@ -61,7 +61,7 @@
 //    public Categorie Categorie { get; set; } = default!;
 //}
 
-//public class Categorie
+//public class CategorieEnumTableForTheSakeOfNotUsigSQLDirectlySorryAboutThat
 //{
 //    public int CategorieId { get; set; }
 //    public string Code { get; set; } = default!;
@@ -69,7 +69,7 @@
 //    public List<LivreCategorie> LivreCategories { get; set; } = [];
 //}
 
-//public enum Categorie
+//public enum Category
 //{
 //    Aventure = 1,
 //    Biographie = 2,
@@ -127,6 +127,28 @@
 
 
 #region Strategy 6 : OwnsMany Json
+//public class Livre
+//{
+//    public int LivreId { get; set; }
+
+//    public string Titre { get; set; } = default!;
+
+//    public List<Categorie> Categories { get; set; } = [];
+
+//}
+
+//public class Categorie
+//{
+//    public string Value { get; set; } = default!;
+
+//    public static implicit operator string(Categorie categorie) => categorie.Value;
+//    public static implicit operator Categorie(string categorie) => new() { Value = categorie };
+
+//}
+#endregion
+
+
+#region Strategy 7 : Many to many with a join table
 public class Livre
 {
     public int LivreId { get; set; }
@@ -135,14 +157,35 @@ public class Livre
 
     public List<Categorie> Categories { get; set; } = [];
 
+    //public List<int> CategorieIds { get; set; } = [];
 }
 
-public class Categorie
+public record Categorie
 {
-    public string Value { get; set; } = default!;
+    private string _code = default!;
+    public int CategorieId { get; } = default!;
+    public string Code
+    {
+        get
+        {
+            return _code;
+        }
+    }
+}
 
-    public static implicit operator string( Categorie categorie ) => categorie.Value;
-    public static implicit operator Categorie( string categorie ) => new() { Value = categorie };
-
+public enum CategoryEnum
+{
+    Aventure = 1,
+    Biographie = 2,
+    Roman = 3,
 }
 #endregion
+
+
+//protected override void OnModelCreating(ModelBuilder modelBuilder)
+//{
+//    modelBuilder.Entity<EntityA>()
+//        .HasMany( a => a.EntityBs )
+//        .WithMany() // No collection in EntityB, so leave this blank
+//        .UsingEntity( join => join.ToTable( "EntityAEntityB" ) ); // Name of the join table
+//}
