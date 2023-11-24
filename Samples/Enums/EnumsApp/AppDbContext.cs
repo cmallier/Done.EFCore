@@ -7,9 +7,10 @@ namespace EnumsApp;
 public class AppDbContext : DbContext
 {
     // Configure from Entities to use SqlServer with local Sql mdf file
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
         => optionsBuilder
-          .UseSqlServer( @"Data Source=Laptop-Work; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          //.UseSqlServer( @"Data Source=Laptop-Work; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
+          .UseSqlServer( @"Data Source=Desktop-Home; Initial Catalog=EnumsApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           //.UseSqlServer( @"Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=ManyToManyApp; Integrated Security=True; Connect Timeout=30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False" )
           .LogTo( Console.WriteLine, new[] { RelationalEventId.CommandExecuted } )
           .EnableSensitiveDataLogging();
@@ -27,7 +28,7 @@ public class AppDbContext : DbContext
     public DbSet<Livre> Livres => Set<Livre>();
 
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating( ModelBuilder modelBuilder )
     {
         // Strategy 1
         // NoTable
@@ -53,16 +54,84 @@ public class AppDbContext : DbContext
 
 
         // Strategy 3
-        modelBuilder.Entity<Livre>().ToTable( "Livres" );
+        //modelBuilder.Entity<Livre>().ToTable( "Livres" );
+
+        //modelBuilder.Entity<Livre>()
+        //            .HasMany( e => e.LivreCategories )
+        //            .WithOne( x => x.Livre )
+        //            .HasForeignKey( x => x.LivresId );
+
+        //modelBuilder.Entity<LivreCategorie>().ToTable( "LivresCategories" );
+
+        //modelBuilder.Entity<LivreCategorie>()
+        //            .HasKey( x => new { x.LivresId, x.CategoriesId } );
+
+        //modelBuilder.Entity<Categorie>()
+        //            .HasMany( x => x.LivreCategories )
+        //            .WithOne( x => x.Categorie )
+        //            .HasForeignKey( x => x.CategoriesId );
+
+
+        //modelBuilder.Entity<Livre>().ToTable( "Livres" );
+        //modelBuilder.Entity<Categorie>().ToTable( "Categories" );
+
+        //modelBuilder.Entity<Livre>()
+        //            .HasMany( "LivreCategories" )
+        //            .WithOne( "Livre" )
+        //            .HasForeignKey( "LivresId" );
+
+        //modelBuilder.Entity<LivreCategorie>().ToTable( "LivresCategories" );
+
+        //modelBuilder.Entity<LivreCategorie>()
+        //            .HasKey( "LivresId", "CategoriesId" );
+
+        //modelBuilder.Entity<Categorie>()
+        //            .Property( x => x.CategorieId )
+        //            .ValueGeneratedNever();
+
+        //modelBuilder.Entity<Categorie>()
+        //            .HasMany( "LivreCategories" )
+        //            .WithOne( "Categorie" )
+        //            .HasForeignKey( "CategoriesId" );
+
+
+        // Strategy 4
+        //modelBuilder.Entity<Livre>().ToTable( "Livres" );
+
+        //modelBuilder.Entity<Livre>()
+        //            .HasMany( "LivreCategories" )
+        //            .WithOne( "Livre" )
+        //            //.WithOne( "_livre" ) Backing field
+        //            .HasForeignKey( "LivresId" );
+
+        //modelBuilder.Entity<LivreCategorie>().ToTable( "LivresCategories" );
+
+        //modelBuilder.Entity<LivreCategorie>()
+        //            .HasKey( "LivresId", "CategoriesId" );
+
+
+        // Strategy 5
+        //modelBuilder.Entity<Livre>().ToTable( "Livres" );
+
+        //modelBuilder.Entity<Livre>()
+        //            .Ignore( x => x.Categories );
+
+
+        // Strategy 6
+        //modelBuilder.Entity<Livre>().ToTable( "Livres" );
 
         modelBuilder.Entity<Livre>()
-            .HasMany( e => e.Categories )
-            .WithMany( x => x.Livres )
-            .UsingEntity( joinEntityName: "LivreCategorie",
-                r => r.HasOne( typeof( Categorie ) ).WithMany().HasForeignKey( "CategorieId" ).HasPrincipalKey( "CategorieId" ),
-                l => l.HasOne( typeof( Livre ) ).WithMany().HasForeignKey( "LivreId" ).HasPrincipalKey( "LivreId" ),
-                j => j.HasKey( "LivreId", "CategorieId" )
-            );
+                    .OwnsMany( x => x.Categories, builder => { builder.ToJson(); } );
+
+
+        //modelBuilder.Entity<Livre>()
+        //    .HasMany( e => e.Categories )
+        //    .WithMany( x => x.Livres )
+        //    .UsingEntity( joinEntityName: "LivreCategorie",
+        //        r => r.HasOne( typeof( Categorie ) ).WithMany().HasForeignKey( "CategorieId" ).HasPrincipalKey( "CategorieId" ),
+        //        l => l.HasOne( typeof( Livre ) ).WithMany().HasForeignKey( "LivreId" ).HasPrincipalKey( "LivreId" ),
+        //        j => j.HasKey( "LivreId", "CategorieId" )
+        //    );
     }
 }
 

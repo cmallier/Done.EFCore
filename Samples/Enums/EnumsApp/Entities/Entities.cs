@@ -19,6 +19,7 @@
 //}
 #endregion
 
+
 #region Strategy 2: Use many to many
 //public class Livre
 //{
@@ -41,7 +42,91 @@
 #endregion
 
 
-#region Strategy 3: Use a intermediate entity
+#region Strategy 3 : Use a intermediate entity
+//public class Livre
+//{
+//    public int LivreId { get; set; }
+
+//    public string Titre { get; set; } = default!;
+
+//    public List<LivreCategorie> LivreCategories { get; set; } = [];
+
+//}
+
+//public class LivreCategorie
+//{
+//    public int LivresId { get; set; }
+//    public Livre Livre { get; set; } = default!;
+//    public int CategoriesId { get; set; }
+//    public Categorie Categorie { get; set; } = default!;
+//}
+
+//public class Categorie
+//{
+//    public int CategorieId { get; set; }
+//    public string Code { get; set; } = default!;
+
+//    public List<LivreCategorie> LivreCategories { get; set; } = [];
+//}
+
+//public enum Categorie
+//{
+//    Aventure = 1,
+//    Biographie = 2,
+//    Roman = 3,
+//}
+#endregion
+
+
+#region Strategy 4 : Mapping
+//public class Livre
+//{
+//    public int LivreId { get; set; }
+
+//    public string Titre { get; set; } = default!;
+
+//    public List<LivreCategorie> LivreCategories { get; set; } = [];
+
+//}
+
+//public class LivreCategorie
+//{
+//    //private Livre _livre = default!;   // Backend field
+//    public int LivresId { get; set; }
+//    public Livre Livre { get; set; } = default!;
+//    public int CategoriesId { get; set; }
+//}
+
+//public enum Categorie
+//{
+//    Aventure = 1,
+//    Biographie = 2,
+//    Roman = 3,
+//}
+#endregion
+
+
+#region Strategy 5 : Domain Driven Design
+//public class Livre
+//{
+//    public int LivreId { get; set; }
+
+//    public string Titre { get; set; } = default!;
+
+//    public List<Categorie> Categories { get; set; } = [];
+
+//}
+
+//public enum Categorie
+//{
+//    Aventure = 1,
+//    Biographie = 2,
+//    Roman = 3,
+//}
+#endregion
+
+
+#region Strategy 6 : OwnsMany Json
 public class Livre
 {
     public int LivreId { get; set; }
@@ -52,24 +137,12 @@ public class Livre
 
 }
 
-public class LivreCategorie
-{
-    public int LivreId { get; set; }
-    public int CategorieId { get; set; }
-}
-
 public class Categorie
 {
-    public int CategorieId { get; set; }
-    public string Code { get; set; } = default!;
+    public string Value { get; set; } = default!;
 
-    public List<Livre> Livres { get; set; } = [];
+    public static implicit operator string( Categorie categorie ) => categorie.Value;
+    public static implicit operator Categorie( string categorie ) => new() { Value = categorie };
+
 }
-
-//public enum Categorie
-//{
-//    Aventure = 1,
-//    Biographie = 2,
-//    Roman = 3,
-//}
 #endregion
