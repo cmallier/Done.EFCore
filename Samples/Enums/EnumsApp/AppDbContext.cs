@@ -155,6 +155,13 @@ public class AppDbContext : DbContext
         //        l => l.HasOne( typeof( Livre ) ).WithMany().HasForeignKey( "LivreId" ).HasPrincipalKey( "LivreId" ),
         //        j => j.HasKey( "LivreId", "CategorieId" )
         //    );
+
+
+        // Strategy 8 (Copibec with Enums)
+        //modelBuilder.Entity<Livre>()
+        //            .HasMany( a => a.Categories )
+        //            .WithMany() // No collection in EntityB, so leave this blank
+        //            .UsingEntity( join => join.ToTable( "LicenceTypeSupport" ).Property<int>( "TypeSupportsId" ).HasColumnName( "TypeSupportId" ) );
     }
 }
 
