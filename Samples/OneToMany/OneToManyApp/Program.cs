@@ -4,37 +4,37 @@ using OneToManyApp.Entities;
 
 using( var context = new AppDbContext() )
 {
-    context.Database.EnsureDeleted();
-    context.Database.EnsureCreated();
+    //context.Database.EnsureDeleted();
+    //context.Database.EnsureCreated();
 
     /*
     select * from Livres
     select * from Tags
     */
 
-    Livre livre1 = new()
-    {
-        Titre = "Titre1",
-        Tags = new List<Tag>()
-        {
-            new() { Nom = "Tag11" },
-            new() { Nom = "Tag12" },
-            new() { Nom = "Tag13" },
-        }
-    };
-    Livre livre2 = new()
-    {
-        Titre = "Titre2",
-        Tags = new List<Tag>()
-        {
-            new() { Nom = "Tag21" },
-            new() { Nom = "Tag22" },
-            new() { Nom = "Tag23" },
-        }
-    };
+    //Livre livre1 = new()
+    //{
+    //    Titre = "Titre1",
+    //    Tags = new List<Tag>()
+    //    {
+    //        new() { Nom = "Tag11" },
+    //        new() { Nom = "Tag12" },
+    //        new() { Nom = "Tag13" },
+    //    }
+    //};
+    //Livre livre2 = new()
+    //{
+    //    Titre = "Titre2",
+    //    Tags = new List<Tag>()
+    //    {
+    //        new() { Nom = "Tag21" },
+    //        new() { Nom = "Tag22" },
+    //        new() { Nom = "Tag23" },
+    //    }
+    //};
 
-    context.AddRange( livre1, livre2 );
-    context.SaveChanges();
+    //context.AddRange( livre1, livre2 );
+    //context.SaveChanges();
 }
 
 
@@ -43,22 +43,53 @@ Console.WriteLine( "-- Results" );
 
 using( var context = new AppDbContext() )
 {
-    List<Livre> result1 = context.Livres
-                                 .Include( l => l.Tags )
-                                 .TagWith( "----- Result 1 -----" )
-                                 .ToList();
+    //List<Livre> result1 = context.Livres
+    //                             .Include( l => l.Tags )
+    //                             .TagWith( "----- Result 1 -----" )
+    //                             .ToList();
 
-    Console.WriteLine( $"Result 1: {result1.Count}" );
+    //Console.WriteLine( $"Result 1: {result1.Count}" );
+
+
+
+    // Case 3
+    //Livre livre = context.Livres
+    //                         .Include( l => l.Tags )
+    //                         .Where( x => x.LivreId == 1 )
+    //                         .TagWith( "----- Result 1 -----" )
+    //                         //.AsSplitQuery()
+    //                         .First();
+
+    //Console.WriteLine( $"Result 1: {livre.Titre}" );
+
+    //foreach( Tag tag in livre.Tags )
+    //{
+    //    Console.WriteLine( $"  {tag.Nom}" );
+    //}
+
+
+    // Case One-to-one
+    Livre livre = context.Livres
+                         .Include( l => l.AuteurProp )
+                         .Where( x => x.LivreId == 1 )
+                         .TagWith( "----- Result 1 -----" )
+                         //.AsSplitQuery()
+                         .First();
+
+    Console.WriteLine( $"Result 1: {livre.Titre}" );
+    Console.WriteLine( $"Result 1: {livre.AuteurProp.Nom}" );
+
+
 
 
     // SELECT t.XTagId, t.LivreXLivreId, t.Nom, t.YLivreId
     // FROM Tags AS t
     // WHERE t.YLivreId = 1
 
-    List<Tag> tags = context.Tags
-                            .Where( x => x.YLivreId == 1 )
-                            .TagWith( "----- Result 2 -----" )
-                            .ToList();
+    //List<Tag> tags = context.Tags
+    //                        .Where( x => x.LivreId == 1 )
+    //                        .TagWith( "----- Result 2 -----" )
+    //                        .ToList();
 
 
     // SELECT t.XTagId, t.LivreXLivreId, t.Nom, t.YLivreId, l.XLivreId, l.Titre
@@ -96,8 +127,8 @@ using( var context = new AppDbContext() )
     //                .ToList();
 
 
-    foreach( Tag tag in tags )
-    {
-        Console.WriteLine( $"{tag.Nom} - {tag.Livre.Titre}" );
-    }
+    //foreach( Tag tag in tags )
+    //{
+    //    Console.WriteLine( $"{tag.Nom} - {tag.Livre.Titre}" );
+    //}
 }
