@@ -184,14 +184,13 @@ public enum CategoryEnum
 
 
 #region Strategy 8 :
-public class Compte
-{
-}
-
-public sealed class Auteur
+public abstract class Compte
 {
     public int CompteId { get; set; }
+}
 
+public sealed class Auteur : Compte
+{
     public string Nom { get; set; } = default!;
 
     public ICollection<Association> Associations { get; set; } = [];

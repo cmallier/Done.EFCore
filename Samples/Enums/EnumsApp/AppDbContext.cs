@@ -227,10 +227,14 @@ public class AppDbContext : DbContext
         //            .UsingEntity( join => join.ToTable( "LicenceTypeSupport" ).Property<int>( "TypeSupportsId" ).HasColumnName( "TypeSupportId" ) );
 
 
+        modelBuilder.Entity<Compte>().ToTable( "Compte" ).UseTptMappingStrategy();
+        modelBuilder.Entity<Compte>().HasKey( x => x.CompteId );
+
+
         modelBuilder.Entity<Auteur>().ToTable( "Auteur" );
 
-        modelBuilder.Entity<Auteur>()
-                    .HasKey( x => x.CompteId );
+        //modelBuilder.Entity<Auteur>()
+        //            .HasKey( x => x.CompteId );
 
         modelBuilder.Entity<Association>().ToTable( "Association" );
         modelBuilder.Entity<Association>().HasKey( x => x.Id );

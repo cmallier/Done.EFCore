@@ -438,17 +438,17 @@ static void ModifiyStates( IEnumerable<EntityEntry> entries )
 
 #region Strategy 8 : Intermediate ManyToMany
 
-using( var context = new AppDbContext() )
-{
-    Association asss = context.Associations.Find( 3 )!;
+//using( var context = new AppDbContext() )
+//{
+//    Association asss = context.Associations.Find( 3 )!;
 
-    Auteur auteur = context.Auteurs.Where( x => x.Nom == "Nom1" )
-                                  .First();
+//    Auteur auteur = context.Auteurs.Where( x => x.Nom == "Nom1" )
+//                                  .First();
 
-    auteur.Associations.Add( asss );
+//    auteur.Associations.Add( asss );
 
-    context.SaveChanges();
-}
+//    context.SaveChanges();
+//}
 
 using( var context = new AppDbContext() )
 {
