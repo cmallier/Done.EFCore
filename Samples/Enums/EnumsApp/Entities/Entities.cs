@@ -182,6 +182,31 @@ public enum CategoryEnum
 #endregion
 
 
+
+#region Strategy 8 :
+public class Compte
+{
+}
+
+public sealed class Auteur
+{
+    public int CompteId { get; set; }
+
+    public string Nom { get; set; } = default!;
+
+    public ICollection<Association> Associations { get; set; } = [];
+}
+
+public sealed record Association
+{
+    public static Association IQ { get; } = new() { Id = 1, Code = "IQ" };
+
+    public required int Id { get; init; } = default!;
+    public required string Code { get; init; } = default!;
+}
+
+#endregion
+
 //protected override void OnModelCreating(ModelBuilder modelBuilder)
 //{
 //    modelBuilder.Entity<EntityA>()

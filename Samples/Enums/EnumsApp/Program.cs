@@ -1,36 +1,34 @@
-﻿
-
-using EnumsApp;
+﻿using EnumsApp;
 using EnumsApp.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-static void DisplayStates(IEnumerable<EntityEntry> entries)
+static void DisplayStates( IEnumerable<EntityEntry> entries )
 {
-    foreach ( EntityEntry entry in entries )
+    foreach( EntityEntry entry in entries )
     {
         Console.WriteLine( $"Entity: {entry.Entity.GetType().Name}, State: {entry.State} " );
 
-        foreach ( string propertyName in entry.Properties.Select( p => p.Metadata.Name ) )
+        foreach( string propertyName in entry.Properties.Select( p => p.Metadata.Name ) )
         {
             Console.WriteLine( $"Property: {propertyName}, OriginalValue: {entry.OriginalValues[propertyName]}, CurrentValue: {entry.CurrentValues[propertyName]}, IsModified: {entry.Members.First( x => x.Metadata.Name == propertyName ).IsModified}" );
         }
     }
 }
 
-static void ModifiyStates(IEnumerable<EntityEntry> entries)
+static void ModifiyStates( IEnumerable<EntityEntry> entries )
 {
-    foreach ( EntityEntry entry in entries )
+    foreach( EntityEntry entry in entries )
     {
         Console.WriteLine( $"Entity: {entry.Entity.GetType().Name}, State: {entry.State} " );
 
-        if ( entry.Entity.GetType() == typeof( Categorie ) )
+        if( entry.Entity.GetType() == typeof( Categorie ) )
         {
             entry.State = EntityState.Detached;
             return;
         }
 
-        foreach ( string propertyName in entry.Properties.Select( p => p.Metadata.Name ) )
+        foreach( string propertyName in entry.Properties.Select( p => p.Metadata.Name ) )
         {
             Console.WriteLine( $"Property: {propertyName}, OriginalValue: {entry.OriginalValues[propertyName]}, CurrentValue: {entry.CurrentValues[propertyName]}, IsModified: {entry.Members.First( x => x.Metadata.Name == propertyName ).IsModified}" );
         }
@@ -349,7 +347,7 @@ static void ModifiyStates(IEnumerable<EntityEntry> entries)
 //        Console.WriteLine( $"  - {categorie}" );
 //    }
 //}
-#endregion region
+#endregion
 
 
 #region Strategy 6 : Json
@@ -393,50 +391,80 @@ static void ModifiyStates(IEnumerable<EntityEntry> entries)
 //// LivreId  Titre   Categories
 //// 1	    Titre1  [{"Value":"Biographie"},{ "Value":"Roman"}]
 
-#endregion region
+#endregion
 
 
 #region Strategy 7 : Intermediate ManyToMany
 
 
-using ( var context = new AppDbContext() )
-{
-    Categorie categorie = context.Categories.Find( 1 );
+//using( var context = new AppDbContext() )
+//{
+//    Categorie categorie = context.Categories.Find( 1 );
 
-    Livre livre1 = new()
-    {
-        Titre = "Titre1",
-        Categories = new List<Categorie>() { categorie },
-    };
+//    Livre livre1 = new()
+//    {
+//        Titre = "Titre1",
+//        Categories = new List<Categorie>() { categorie },
+//    };
 
-    // Add
-    context.Livres.Add( livre1 );
+//    // Add
+//    context.Livres.Add( livre1 );
 
-    //DisplayStates( context.ChangeTracker.Entries() );
-    //ModifiyStates( context.ChangeTracker.Entries() );
-    //DisplayStates( context.ChangeTracker.Entries() );
-    context.SaveChanges();
+//    //DisplayStates( context.ChangeTracker.Entries() );
+//    //ModifiyStates( context.ChangeTracker.Entries() );
+//    //DisplayStates( context.ChangeTracker.Entries() );
+//    context.SaveChanges();
 
 
-    Console.WriteLine( "------------------------------------------------------" );
-    Console.WriteLine( "-- Results" );
-}
+//    Console.WriteLine( "------------------------------------------------------" );
+//    Console.WriteLine( "-- Results" );
+//}
 
-using ( var context = new AppDbContext() )
-{
-    Livre result1 = context.Livres.Where( x => x.Titre == "Titre1" )
-                                  .Include( x => x.Categories )
-                                  .First();
+//using( var context = new AppDbContext() )
+//{
+//    Livre result1 = context.Livres.Where( x => x.Titre == "Titre1" )
+//                                  .Include( x => x.Categories )
+//                                  .First();
 
-    Console.WriteLine( $"{result1.Titre} Categories: {result1.Categories.Count()}" );
-    foreach ( Categorie categorie in result1.Categories )
-    {
-        Console.WriteLine( $"  - {categorie}" );
-    }
-}
+//    Console.WriteLine( $"{result1.Titre} Categories: {result1.Categories.Count()}" );
+//    foreach( Categorie categorie in result1.Categories )
+//    {
+//        Console.WriteLine( $"  - {categorie}" );
+//    }
+//}
 
 
 #endregion
+
+#region Strategy 8 : Intermediate ManyToMany
+
+using( var context = new AppDbContext() )
+{
+    Association asss = context.Associations.Find( 3 )!;
+
+    Auteur auteur = context.Auteurs.Where( x => x.Nom == "Nom1" )
+                                  .First();
+
+    auteur.Associations.Add( asss );
+
+    context.SaveChanges();
+}
+
+using( var context = new AppDbContext() )
+{
+    Auteur auteur = context.Auteurs.Where( x => x.Nom == "Nom1" )
+                                  .Include( x => x.Associations )
+                                  .First();
+
+    Console.WriteLine( $"{auteur.Nom} Categories: {auteur.Associations.Count()}" );
+    foreach( Association association in auteur.Associations )
+    {
+        Console.WriteLine( $"  - {association}" );
+    }
+}
+
+#endregion
+
 
 // https://softdevpractice.com/blog/many-to-many-ef-core/
 // https://www.learnentityframeworkcore5.com/whats-new-in-ef-core-5/many-to-many-relationship
