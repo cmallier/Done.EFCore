@@ -1,28 +1,29 @@
 ﻿using InheritanceApp;
+using Microsoft.EntityFrameworkCore;
 using ProjectionApp.Entities;
 
 using ( var context = new AppDbContext() )
 {
-    context.Database.EnsureDeleted();
-    context.Database.EnsureCreated();
+    //context.Database.EnsureDeleted();
+    //context.Database.EnsureCreated();
 
 
-    Auteur auteur1 = new()
-    {
-        Nom = "Auteur 1",
-        Biographie = new Biographie
-        {
-            Texte = "Biographie 1"
-        }
-    };
+    //Auteur auteur1 = new()
+    //{
+    //    Nom = "Auteur 1",
+    //    Biographie = new Biographie
+    //    {
+    //        Texte = "Biographie 1"
+    //    }
+    //};
 
-    Auteur auteur2 = new()
-    {
-        Nom = "Auteur 2",
-    };
+    //Auteur auteur2 = new()
+    //{
+    //    Nom = "Auteur 2",
+    //};
 
-    context.AddRange( auteur1, auteur2 );
-    context.SaveChanges();
+    //context.AddRange( auteur1, auteur2 );
+    //context.SaveChanges();
 }
 
 Console.WriteLine( "------------------------------------------------------" );
@@ -30,12 +31,14 @@ Console.WriteLine( "-- Results" );
 
 using ( var context = new AppDbContext() )
 {
-    List<AuteurReadModel> auteurs = context.Auteurs.Select( x => new AuteurReadModel
-    {
-        AuteurId = x.AuteurId,
-        AuteurNom = x.Nom,
-        BiographieTexte = x.Biographie!.Texte
-    } )
+    List<AuteurReadModel> auteurs = context.Auteurs
+        .Include( x => x.Biographie )
+        .Select( x => new AuteurReadModel
+        {
+            AuteurId = x.AuteurId,
+            AuteurNom = x.Nom,
+            BiographieTexte = x.Biographie!.Texte
+        } )
     .ToList();
 
     Console.WriteLine( "-----" );

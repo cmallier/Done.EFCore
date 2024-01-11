@@ -24,5 +24,5 @@ public class AuteurReadModel
 
     public string AuteurNom { get; set; } = default!;
 
-    public string BiographieTexte { get; set; }
+    public string? BiographieTexte { get; set; }
 }
